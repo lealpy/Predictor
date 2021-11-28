@@ -22,7 +22,7 @@ class MainViewModel (application : Application) : AndroidViewModel(application) 
     )
     val clickCounterText : LiveData<String> = _clickCounterText
 
-    private val firstPhrase : List<String> = getApplication<Application>()
+    private val firstPhrase = getApplication<Application>()
         .resources
         .getStringArray(R.array.firstPhrase)
         .toList()
