@@ -38,6 +38,10 @@ class MainActivity : AppCompatActivity() {
             binding.predictionTV.text = prediction
         }
 
+        viewModel.predictionVisibility.observe(this) { predictionVisibility ->
+            binding.predictionCV.visibility = predictionVisibility
+        }
+
         viewModel.clickCounterText.observe(this) { clickCounter ->
             binding.predictionCounterTV.text = clickCounter
         }

@@ -1,57 +1,50 @@
 package com.lealpy.predictor
 
+import android.app.Application
+import android.view.View
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import java.util.*
 
-class MainViewModel : ViewModel() {
+class MainViewModel (application : Application) : AndroidViewModel(application) {
 
     private val _prediction = MutableLiveData<String>()
     val prediction : LiveData<String> = _prediction
 
+    private val _predictionVisibility = MutableLiveData(View.INVISIBLE)
+    val predictionVisibility : LiveData<Int> = _predictionVisibility
+
     private var clickCounter = 0
 
-    private val _clickCounterText = MutableLiveData<String>()
+    private val _clickCounterText = MutableLiveData(
+        getApplication<Application>().resources.getString(R.string.got_predictions) + " 0"
+    )
     val clickCounterText : LiveData<String> = _clickCounterText
 
-    private val firstPhrase = listOf(
-        "Вам нужно ",
-        "Советую вам ",
-        "Это будет страшной ошибкой - ",
-        "Нужно немедленно ",
-        "Это очень рискованно - ",
-        "Невозможно ",
-        "Лучше всего тайком ",
-        "Чувствую, что вы хотите ",
-        "Вы сами знаете, что следует ",
-        "Повелеваю "
-        )
+    private val firstPhrase : List<String> = getApplication<Application>()
+        .resources
+        .getStringArray(R.array.firstPhrase)
+        .toList()
 
-    private val secondPhrase = listOf(
-        "заняться этим прямо сейчас.",
-        "ещё раз всё обдумать.",
-        "предусмотреть путь для отступления.",
-        "прыгнуть в омут с головой.",
-        "поторопиться с принятием решения.",
-        "забыть об этом.",
-        "сделать, но никому не рассказывать.",
-        "рассказать об этом другу и послушать его совета.",
-        "послушать меня и сделать наоборот.",
-        "перестать спрашивать у бесполезного меня и принять решение самостоятельно. В КОИ-ТО ВЕКИ!"
-    )
+    private val secondPhrase = getApplication<Application>()
+        .resources
+        .getStringArray(R.array.secondPhrase)
+        .toList()
 
     fun onBtnClicked() {
+        _predictionVisibility.value = View.VISIBLE
         clickCounter ++
-        _clickCounterText.value = "Получено предсказаний: $clickCounter"
+        _clickCounterText.value = getApplication<Application>()
+            .resources.getString(R.string.got_predictions) + " " + clickCounter
         generatePhrase()
     }
 
     private fun generatePhrase() {
         val random = Random()
-        val indexOfFirstPhrase = random.nextInt(firstPhrase.lastIndex)
-        val indexOfSecondPhrase = random.nextInt(secondPhrase.lastIndex)
-        _prediction.value = firstPhrase[indexOfFirstPhrase] + secondPhrase[indexOfSecondPhrase]
+        val indexOfFirstPhrase = random.nextInt(firstPhrase.lastIndex + 1)
+        val indexOfSecondPhrase = random.nextInt(secondPhrase.lastIndex + 1)
+        _prediction.value = firstPhrase[indexOfFirstPhrase] + " " + secondPhrase[indexOfSecondPhrase]
     }
 
 }
